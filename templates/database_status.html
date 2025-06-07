@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Status - STR-GWAS Explorer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .status-card h3 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .status-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .status-indicator {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-online {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .nav-links {
+            padding: 20px;
+            background: #f8f9fa;
+            text-align: center;
+        }
+        
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .navigation {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        
+        .refresh-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+        }
+        
+        .refresh-btn:hover {
+            background: #218838;
+        }
+        
+        .simple-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .simple-table th,
+        .simple-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .simple-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation">
+            <a href="/" class="nav-link">← Home</a>
+        </div>
+        <div class="header">
+            <h1>⚙️ Database Status</h1>
+            <p>System health and data availability overview</p>
+            <button onclick="window.location.reload()" class="refresh-btn">🔄 Refresh Page</button>
+        </div>
+        
+        <div id="loading" class="loading">
+            <p>Loading database status...</p>
+        </div>
+        
+        <div id="content" style="display: none;">
+            <div class="status-grid">
+                <div class="status-card">
+                    <h3>🗄️ Database Files</h3>
+                    <div class="status-item">
+                        <span class="status-label">Locus Database</span>
+                        <span class="status-indicator" id="locus-status">⏳ Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Manhattan Database</span>
+                        <span class="status-indicator" id="manhattan-status">⏳ Checking...</span>
+                    </div>
+                </div>
+                
+                <div class="status-card">
+                    <h3>📊 Data Statistics</h3>
+                    <div class="status-item">
+                        <span class="status-label">Available Traits</span>
+                        <span class="status-value" id="trait-count">-</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Total GWAS Variants</span>
+                        <span class="status-value" id="variant-count">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="padding: 20px;">
+                <h3>Available Traits</h3>
+                <table class="simple-table" id="traits-table">
+                    <thead>
+                        <tr>
+                            <th>Trait Name</th>
+                            <th>Variants</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="traits-tbody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="error-container"></div>
+        
+        <div class="nav-links">
+            <a href="/">← Home</a>
+            <a href="/browse_traits">Browse Traits</a>
+            <a href="/setup_instructions">Setup Guide</a>
+        </div>
+    </div>
+    
+    <script>
+        async function loadData() {
+            try {
+                console.log('Fetching database status...');
+                const response = await fetch('/database_status_json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Response is not JSON format');
+                }
+                
+                const data = await response.json();
+                console.log('Data received:', data);
+                
+                updateUI(data);
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showError(`Failed to load database status: ${error.message}`);
+            }
+        }
+        
+        function updateUI(data) {
+            // Database status
+            document.getElementById('locus-status').textContent = data.locus_db_exists ? '✅ Online' : '❌ Offline';
+            document.getElementById('locus-status').className = `status-indicator ${data.locus_db_exists ? 'status-online' : 'status-offline'}`;
+            
+            document.getElementById('manhattan-status').textContent = data.manhattan_db_exists ? '✅ Online' : '❌ Offline';
+            document.getElementById('manhattan-status').className = `status-indicator ${data.manhattan_db_exists ? 'status-online' : 'status-offline'}`;
+            
+            // Statistics
+            document.getElementById('trait-count').textContent = data.available_traits ? data.available_traits.length : '0';
+            document.getElementById('variant-count').textContent = data.total_variants ? data.total_variants.toLocaleString() : '0';
+            
+            // Populate traits table
+            populateTraitsTable(data.trait_stats || []);
+            
+            // Show content, hide loading
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+        }
+        
+        function populateTraitsTable(traitStats) {
+            const tbody = document.getElementById('traits-tbody');
+            tbody.innerHTML = '';
+            
+            if (traitStats.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #6c757d;">No trait data available</td></tr>';
+                return;
+            }
+            
+            traitStats.forEach(trait => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${trait.trait_name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</td>
+                    <td>${trait.total_variants ? trait.total_variants.toLocaleString() : 'N/A'}</td>
+                    <td><a href="/trait_overview/${trait.trait_name}" style="color: #667eea; text-decoration: none;">View Plots</a></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = `<div class="error-message">❌ ${message}</div>`;
+        }
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

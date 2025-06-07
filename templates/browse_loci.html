@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse STR Loci - STR-GWAS Explorer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+        
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .search-input, .filter-select {
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .search-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .chromosome-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: #f8f9fa;
+            gap: 10px;
+        }
+        
+        .chrom-tab {
+            padding: 8px 15px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .chrom-tab:hover, .chrom-tab.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .loci-container {
+            padding: 20px;
+        }
+        
+        .chromosome-section {
+            margin-bottom: 30px;
+        }
+        
+        .chromosome-header {
+            background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .chromosome-header h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+        
+        .loci-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 15px;
+        }
+        
+        .locus-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .locus-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+        
+        .locus-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .repeat-id {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+        
+        .location {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .locus-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .detail-label {
+            color: #6c757d;
+        }
+        
+        .detail-value {
+            font-weight: 500;
+        }
+        
+        .trait-badge {
+            background: #e7f3ff;
+            color: #004085;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        .navigation {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        
+        .nav-links {
+            padding: 20px;
+            background: #f8f9fa;
+            text-align: center;
+        }
+        
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .stats-bar {
+            padding: 15px 20px;
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            margin: 20px;
+            border-radius: 4px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation">
+            <a href="/" class="nav-link">← Home</a>
+        </div>
+        <div class="header">
+            <h1>Browse STR Loci</h1>
+            <p>Explore {{ total_loci }} STR loci across all chromosomes</p>
+        </div>
+        
+        <div class="controls">
+            <input type="text" id="search-input" class="search-input" 
+                   placeholder="Search by repeat_id, trait, or motif...">
+            <select id="trait-filter" class="filter-select">
+                <option value="">All traits</option>
+                {% for trait in unique_traits %}
+                    <option value="{{ trait }}">{{ trait.replace('_', ' ').title() }}</option>
+                {% endfor %}
+            </select>
+            <button onclick="showAllChromosomes()" class="chrom-tab">Show All</button>
+        </div>
+        
+        <div class="chromosome-tabs" id="chromosome-tabs">
+            {% for chrom in loci_by_chrom.keys() | sort %}
+            <div class="chrom-tab" data-chrom="{{ chrom }}" onclick="showChromosome('{{ chrom }}')">
+                Chr{{ chrom }} ({{ loci_by_chrom[chrom] | length }})
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="stats-bar">
+            <strong>Quick Stats:</strong> 
+            <span id="visible-count">{{ total_loci }}</span> loci shown | 
+            <span id="chrom-count">{{ loci_by_chrom.keys() | length }}</span> chromosomes | 
+            <span id="trait-count">{{ unique_traits | length }}</span> traits
+        </div>
+        
+        <div class="loci-container" id="loci-container">
+            {% for chrom, loci in loci_by_chrom.items() %}
+            <div class="chromosome-section" data-chromosome="{{ chrom }}">
+                <div class="chromosome-header">
+                    <h3>Chromosome {{ chrom }} - {{ loci | length }} STR loci</h3>
+                </div>
+                <div class="loci-grid">
+                    {% for locus in loci %}
+                    <div class="locus-card" 
+                         data-trait="{{ locus.trait }}" 
+                         data-motif="{{ locus.motif }}"
+                         data-repeat-id="{{ locus.repeat_id }}"
+                         onclick="viewLocus('{{ locus.repeat_id }}')">
+                        
+                        <div class="locus-header">
+                            <div class="repeat-id">{{ locus.repeat_id }}</div>
+                            <div class="location">{{ locus.location }}</div>
+                        </div>
+                        
+                        <div class="locus-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Motif:</span>
+                                <span class="detail-value">{{ locus.motif }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Ref Length:</span>
+                                <span class="detail-value">{{ "%.1f"|format(locus.ref_len) if locus.ref_len else "N/A" }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="trait-badge">{{ locus.display_name }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="nav-links">
+            <a href="/">← Home</a>
+            <a href="/browse_traits">Browse Traits</a>
+            <a href="/database_status">Database Status</a>
+        </div>
+    </div>
+    
+    <script>
+        function viewLocus(repeatId) {
+            // Navigate to locus plot page
+            window.location.href = `/locus_plot?repeat_id=${repeatId}`;
+        }
+        
+        function showChromosome(chrom) {
+            // Hide all chromosome sections
+            document.querySelectorAll('.chromosome-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected chromosome
+            document.querySelector(`[data-chromosome="${chrom}"]`).classList.remove('hidden');
+            
+            // Update active tab
+            document.querySelectorAll('.chrom-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-chrom="${chrom}"]`).classList.add('active');
+            
+            updateStats();
+        }
+        
+        function showAllChromosomes() {
+            // Show all chromosome sections
+            document.querySelectorAll('.chromosome-section').forEach(section => {
+                section.classList.remove('hidden');
+            });
+            
+            // Clear active tabs
+            document.querySelectorAll('.chrom-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            updateStats();
+        }
+        
+        function updateStats() {
+            const visibleCards = document.querySelectorAll('.locus-card:not(.hidden)').length;
+            const visibleChroms = document.querySelectorAll('.chromosome-section:not(.hidden)').length;
+            
+            document.getElementById('visible-count').textContent = visibleCards;
+            document.getElementById('chrom-count').textContent = visibleChroms;
+        }
+        
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            filterCards();
+        });
+        
+        // Trait filter
+        document.getElementById('trait-filter').addEventListener('change', function() {
+            filterCards();
+        });
+        
+        function filterCards() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const selectedTrait = document.getElementById('trait-filter').value;
+            
+            document.querySelectorAll('.locus-card').forEach(card => {
+                const repeatId = card.getAttribute('data-repeat-id').toLowerCase();
+                const trait = card.getAttribute('data-trait').toLowerCase();
+                const motif = card.getAttribute('data-motif').toLowerCase();
+                
+                const matchesSearch = !searchTerm || 
+                    repeatId.includes(searchTerm) || 
+                    trait.includes(searchTerm) || 
+                    motif.includes(searchTerm);
+                
+                const matchesTrait = !selectedTrait || trait === selectedTrait.toLowerCase();
+                
+                if (matchesSearch && matchesTrait) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            
+            updateStats();
+        }
+    </script>
+</body>
+</html>

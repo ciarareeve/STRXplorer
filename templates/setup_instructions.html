@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Guide - STRXplorer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .step h3 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .requirements-list {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        
+        .requirements-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .requirements-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .requirements-list li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .navigation {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        
+        .nav-links {
+            padding: 20px;
+            background: #f8f9fa;
+            text-align: center;
+        }
+        
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .file-structure {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 15px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            background: #5a67d8;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .highlight-box h4 {
+            color: #155724;
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation">
+            <a href="/" class="nav-link">← Home</a>
+        </div>
+        <div class="header">
+            <h1>Quick Start Guide</h1>
+            <p>Ready-to-use STRXplorer with pre-loaded data</p>
+        </div>
+        
+        <div class="content">
+            <div class="highlight-box">
+                <h4>🎉 Great News!</h4>
+                <p><strong>This repository comes with all GWAS data pre-loaded!</strong><br>
+                No downloading, no waiting - just clone and run for instant access to all Manhattan plots.</p>
+            </div>
+            
+            <!-- Step 1: Quick Setup -->
+            <div class="step">
+                <h3>Step 1: Quick Setup (2 minutes)</h3>
+                <p>Get up and running in just a few commands:</p>
+                
+                <div class="code-block">
+                <pre><code>
+# Clone the repository
+git clone https://github.com/ciarareeve/STRXplorer
+cd str-gwas-explorer
+
+# Install Python dependencies
+pip install flask pandas numpy plotly requests
+
+# Run the application
+python STRXplorer.py
+                </code></pre>
+                </div>
+                
+                <div class="success">
+                    <strong>That's it!</strong> The application will start at <code>http://localhost:5000</code> with full functionality.
+                </div>
+            </div>
+            
+            <!-- Step 2: What's Included -->
+            <div class="step">
+                <h3>Step 2: What's Included</h3>
+                <p>This repository comes with everything you need:</p>
+                
+                <pre class="file-structure">📁 str-gwas-explorer/
+├── 📄 STRXplorer.py                  ← Main Flask application
+├── 🗃️ locus_data.db                  ← STR locus information
+├── 🗃️ manhattan_data.db              ← Pre-loaded GWAS data (ready to use!)
+├── 📄 manhattan_plot.py              ← Plot generation utilities
+├── 📄 locus_plots.py                 ← Additional plotting functions
+└── 📁 templates/                     ← Web interface templates
+    ├── 📄 home.html
+    ├── 📄 browse_traits.html
+    ├── 📄 browse_loci.html
+    ├── 📄 trait_overview.html
+    └── 📄 ... (other templates)</pre>
+                
+                <div class="requirements-list">
+                    <ul>
+                        <li><strong>Pre-loaded GWAS data</strong> for dozens of traits</li>
+                        <li><strong>STR locus database</strong> with genomic coordinates</li>
+                        <li><strong>Interactive web interface</strong> for data exploration</li>
+                        <li><strong>Manhattan plot generation</strong> for any trait/locus combination</li>
+                        <li><strong>No internet required</strong> for basic functionality</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Step 3: Using the Platform -->
+            <div class="step">
+                <h3>Step 3: Using the Platform</h3>
+                <p>Once running, you can immediately:</p>
+                
+                <ol>
+                    <li><strong>Browse Traits:</strong> View all available traits at <code>/browse_traits</code></li>
+                    <li><strong>Browse STR Loci:</strong> Explore STR locations at <code>/browse_loci</code></li>
+                    <li><strong>Generate Manhattan Plots:</strong> Click any trait to see all associated plots</li>
+                    <li><strong>Check Status:</strong> Monitor system health at <code>/database_status</code></li>
+                </ol>
+                <div class="code-block">
+                <pre><code>
+# Example URLs to explore:
+http://localhost:5000/                          
+http://localhost:5000/browse_traits             
+http://localhost:5000/browse_loci               
+http://localhost:5000/trait_overview/mean_platelet_volume  
+http://localhost:5000/database_status          
+            </code></pre>
+            </div>
+            </div>
+            
+            <!-- Step 4: System Requirements -->
+            <div class="step">
+                <h3>Step 4: System Requirements</h3>
+                <p>Minimal requirements for running the platform:</p>
+                
+                <div class="requirements-list">
+                    <ul>
+                        <li>Python 3.8 or higher</li>
+                        <li>2GB RAM (4GB recommended)</li>
+                        <li>1GB free disk space</li>
+                        <li>Modern web browser (Chrome, Firefox, Safari, Edge)</li>
+                    </ul>
+                </div>
+                
+                <p>Required Python packages:</p>
+                <div class="code-block">
+                <pre><code>
+flask          # Web framework
+pandas         # Data manipulation
+numpy          # Numerical computing
+plotly         # Interactive plotting
+requests       # HTTP requests (for future data updates)
+                </code></pre>
+</div>
+            </div>
+            
+            <!-- Step 5: Data Overview -->
+            <div class="step">
+                <h3>Step 5: Pre-loaded Data Overview</h3>
+                <p>The <code>manhattan_data.db</code> contains:</p>
+                
+                <ul>
+                    <li><strong>Multiple traits:</strong> Blood traits, anthropometric measures, and more</li>
+                    <li><strong>Millions of variants:</strong> Genome-wide association data</li>
+                    <li><strong>Statistical summaries:</strong> P-values, effect sizes, confidence intervals</li>
+                    <li><strong>Optimized indexes:</strong> Fast querying for real-time plotting</li>
+                </ul>
+                
+                <div class="info">
+                    <strong>💡 Data Source:</strong> GWAS data from Margoliash et al. 2023 study on STR associations with complex traits.
+                </div>
+            </div>
+            
+            <!-- Step 6: Troubleshooting -->
+            <div class="step">
+                <h3>Step 6: Troubleshooting</h3>
+                
+                <h4>Common Issues & Quick Fixes:</h4>
+                
+                <div class="warning">
+                    <strong>Application won't start:</strong>
+                    <br>• Check Python version: <code>python --version</code>
+                    <br>• Install missing packages: <code>pip install flask pandas numpy plotly</code>
+                    <br>• Ensure you're in the correct directory
+                </div>
+                
+                <div class="warning">
+                    <strong>Database errors:</strong>
+                    <br>• Verify both <code>.db</code> files are present
+                    <br>• Check file permissions (should be readable)
+                    <br>• Try running from the repository root directory
+                </div>
+                
+                <div class="warning">
+                    <strong>No plots showing:</strong>
+                    <br>• Check the <a href="/database_status">Database Status</a> page
+                    <br>• Try refreshing the browser
+                    <br>• Clear browser cache if plots appear corrupted
+                </div>
+                
+                <div class="warning">
+                    <strong>Port already in use:</strong>
+                    <br>• Kill existing Flask processes: <code>pkill -f flask</code>
+                    <br>• Or specify a different port: <code>flask run --port 5001</code>
+                </div>
+            </div>
+            
+            <!-- Step 7: Advanced Usage
+            <div class="step">
+                <h3>Step 7: Advanced Usage (Optional)</h3>
+                
+                <h4>Adding New Traits:</h4>
+                <p>To add additional GWAS data not included in the pre-loaded database:</p>
+                
+                <div class="code-block">
+                <pre><code>
+# The platform can download additional traits automatically
+# when you access them for the first time. New traits will be
+# added to manhattan_data.db for future use.
+
+# Example: Access a new trait (will trigger download if not in DB)
+http://localhost:5000/trait_overview/new_trait_name
+</code></pre>
+</div>
+                
+                <h4>Database Maintenance:</h4>
+                <div class="code-block">
+                <pre><code>
+# Optional: Add database indexes for better performance
+sqlite3 manhattan_data.db
+CREATE INDEX IF NOT EXISTS idx_trait_chrom_pos ON gwas_variants(trait_name, chrom, pos);
+CREATE INDEX IF NOT EXISTS idx_locus_trait ON locus_data(trait_name);
+.exit
+</code></pre>
+</div>
+                
+                <h4>Custom Data:</h4>
+                <p>To work with your own STR loci or traits, modify the <code>locus_data.db</code> database with your data following the existing schema.</p>
+            </div>
+        </div>
+        
+        <div class="nav-links">
+            <a href="/" class="btn">← Home</a>
+            <a href="/database_status" class="btn btn-success">Check Database Status</a>
+            <a href="/browse_traits" class="btn">Browse Traits</a>
+        </div>
+    </div> -->
+</body>
+</html>

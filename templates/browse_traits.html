@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Traits - STR-GWAS Explorer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+        
+        .search-box {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .traits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .trait-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .trait-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        
+        .trait-card.no-data {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .trait-card.no-data:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .trait-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .trait-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-available {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-no-data {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .navigation {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+
+        
+        .nav-links {
+            padding: 20px;
+            background: #f8f9fa;
+            text-align: center;
+        }
+        
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation">
+            <a href="/" class="nav-link">← Home</a>
+        </div>
+        <div class="header">
+            <h1>Browse Traits</h1>
+            <p>Explore STR associations across {{ traits|length }} available traits</p>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="search-input" class="search-input" 
+                   placeholder="Search traits... (e.g., 'platelet', 'blood', 'haemoglobin')">
+        </div>
+        
+        <div class="traits-grid" id="traits-grid">
+            {% for trait in traits %}
+            <div class="trait-card {% if not trait.has_data %}no-data{% endif %}" 
+                 data-trait="{{ trait.trait }}" 
+                 data-name="{{ trait.display_name|lower }}"
+                 onclick="{% if trait.has_data %}goToTrait('{{ trait.trait }}'){% endif %}">
+                
+                <div class="trait-name">{{ trait.display_name }}</div>
+                
+                <div class="trait-stats">
+                    <span>{{ trait.loci_count }} STR loci</span>
+                    <span class="status-badge {% if trait.has_data %}status-available{% else %}status-no-data{% endif %}">
+                        {{ trait.status }}
+                    </span>
+                </div>
+                
+                {% if trait.gwas_trait != trait.trait %}
+                <div style="font-size: 0.8rem; color: #6c757d; margin-top: 8px;">
+                    Maps to: {{ trait.gwas_trait.replace('_', ' ').title() }}
+                </div>
+                {% endif %}
+                
+                {% if trait.has_data %}
+                <div style="margin-top: 15px; text-align: center;">
+                    <span style="color: #667eea; font-weight: bold;">Click to explore →</span>
+                </div>
+                {% else %}
+                <div style="margin-top: 15px; text-align: center; color: #6c757d;">
+                    <small>No GWAS data available</small>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="nav-links">
+            <a href="/">← Home</a>
+            <a href="/browse_loci">Browse STR Loci</a>
+            <a href="/database_status">Database Status</a>
+        </div>
+    </div>
+    
+    <script>
+        function goToTrait(traitName) {
+            window.location.href = `/trait_overview/${traitName}`;
+        }
+        
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const traitCards = document.querySelectorAll('.trait-card');
+            
+            traitCards.forEach(card => {
+                const traitName = card.getAttribute('data-name');
+                if (traitName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - STRXplorer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .section h3 {
+            color: #667eea;
+            margin: 25px 0 15px 0;
+            font-size: 1.2rem;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #e7f3ff 0%, #f0f8ff 100%);
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .navigation {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .team-member {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        
+        .team-member h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        .team-member .role {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .team-member .affiliation {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .contact-section {
+            background: #e8f5e8;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .contact-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .contact-info {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .contact-info strong {
+            color: #2c3e50;
+        }
+        
+        .email-link {
+            color: #28a745;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .email-link:hover {
+            text-decoration: underline;
+        }
+        
+        .acknowledgments {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        
+        .acknowledgments h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .ack-item {
+            margin: 15px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .ack-item strong {
+            color: #2c3e50;
+        }
+        
+        .external-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .external-link:hover {
+            text-decoration: underline;
+        }
+        
+        .nav-links {
+            padding: 20px;
+            background: #f8f9fa;
+            text-align: center;
+        }
+        
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .course-description {
+            background: #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            font-style: italic;
+        }
+        
+        .publications {
+            background: #fff3cd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .citation {
+            background: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Georgia', serif;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation">
+            <a href="/" class="nav-link">← Home</a>
+        </div>
+        <div class="header">
+            <h1>About STRXplorer</h1>
+            <p>A Bioengineering Capstone Project</p>
+        </div>
+        
+        <div class="content">
+            <!-- Project Overview -->
+            <div class="section">
+                <h2>Project Overview</h2>
+                <div class="highlight-box">
+                    <p><strong>STRXplorer</strong> is an interactive web platform designed to visualize and explore associations between Short Tandem Repeats (STRs) and complex human traits. This tool bridges the gap between complex genomic data and accessible scientific exploration, making STR research more approachable for researchers worldwide.</p>
+                </div>
+                
+                <p>Short Tandem Repeats represent approximately 3% of the human genome yet have been largely overlooked in traditional genome-wide association studies (GWAS). Our platform integrates STR locus plots with Manhattan plots, enabling researchers to seamlessly explore both population-level associations and individual STR effects — a capability that has never been available before in a unified interface.</p>
+                
+                <p>This work is intended to be integrated into <strong>WebSTR</strong>, a comprehensive population-wide database of short tandem repeat variation in humans, expanding its analytical capabilities and making STR research more accessible to the broader scientific community.</p>
+            </div>
+
+            <!-- Educational Context -->
+            <div class="section">
+                <h2>Educational Context</h2>
+                <p>This project was developed as part of UC San Diego's <strong>Bioengineering Undergraduate Capstone Program</strong>, a year-long sequence designed to provide senior-level students with comprehensive design experience.</p>
+                
+                <div class="course-description">
+                    <h3>Capstone Design Course Sequence (BENG 187A-D)</h3>
+                    <p>A multiquarter upper-division sequence totaling ten quarter-units, including:</p>
+                    <ul>
+                        <li><strong>BENG 187A:</strong> Project selection and professional considerations</li>
+                        <li><strong>BENG 187B:</strong> Design methodology and planning</li>
+                        <li><strong>BENG 187C:</strong> Implementation and development</li>
+                        <li><strong>BENG 187D:</strong> Presentation and professional communication</li>
+                    </ul>
+                    <p>The capstone program encompasses various bioengineering domains including biomechanics, systems bioengineering, nanoscale and molecular bioengineering, organ system bioengineering, tissue engineering and regenerative medicine, and bioinstrumentation.</p>
+                </div>
+                
+                <p>As students in the bioengineering department under the <strong>bioinformatics track</strong>, we chose to develop a computational project that would build valuable skills for our future careers as bioinformaticians while contributing meaningful tools to the genomics research community.</p>
+            </div>
+
+            <!-- Team -->
+            <div class="section">
+                <h2>Development Team</h2>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <h4>Ciara Reeve</h4>
+                        <div class="role">Lead Developer</div>
+                        <div class="affiliation">UC San Diego Bioengineering<br>Bioinformatics Track</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="section">
+                <h2>Contact Information</h2>
+                <div class="contact-section">
+                    <h3>Questions & Support</h3>
+                    <div class="contact-info">
+                        <p>For any questions about STRXplorer, technical support, or research collaboration inquiries, please contact:</p>
+                        <p><strong>Ciara Reeve</strong><br>
+                        Lead Developer<br>
+                        <a href="mailto:cireeve@ucsd.edu" class="email-link">cireeve@ucsd.edu</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scientific Foundation -->
+            <div class="section">
+                <h2>Scientific Foundation</h2>
+                <div class="publications">
+                    <h3>Foundational Research</h3>
+                    <p>This platform is inspired by groundbreaking research on STR contributions to complex traits:</p>
+                    
+                    <div class="citation">
+                        <strong>Margoliash, J., Fuchs, S., Li, Y., Zhang, X., Massarat, A., Goren, A., & Gymrek, M.</strong> (2023). Polymorphic short tandem repeats make widespread contributions to blood and serum traits. <em>Cell Genomics</em>, 3(12), 100458.
+                    </div>
+                    
+                    <div class="citation">
+                        <strong>Lundström, O., Verbiest, M.A., Xia, F., Jam, H.Z., Zlobec, I., Anisimova, M., & Gymrek, M.</strong> (2023). WebSTR: A Population-wide Database of Short Tandem Repeat Variation in Humans. <em>Journal of Molecular Biology</em>, 435(22), 168260.
+                    </div>
+                </div>
+                
+                <p>These studies demonstrate that STRs account for 5.2%–7.6% of causal variants identifiable from GWASs for blood traits and reveal novel therapeutic targets in the previously understudied 3% of the genome.</p>
+            </div>
+
+            <!-- Integration with WebSTR -->
+            <div class="section">
+                <h2>Integration with WebSTR Ecosystem</h2>
+                <p>Our STRXplorer is designed as a key component of the broader <a href="https://webstr.ucsd.edu/" class="external-link" target="_blank">WebSTR ecosystem</a> — a comprehensive database aggregating STR data from multiple studies spanning over 1.7 million genomic loci across diverse human populations.</p>
+                
+                <p>WebSTR currently provides:</p>
+                <ul>
+                    <li>Population-specific allele frequencies</li>
+                    <li>Mutation rates and imputation metrics</li>
+                    <li>Associations with gene expression levels</li>
+                    <li>Programmatic API access for researchers</li>
+                </ul>
+                
+                <p>Our visualization platform adds crucial GWAS analysis capabilities, making complex trait associations accessible through interactive Manhattan and STR locus plots.</p>
+            </div>
+
+            <!-- Acknowledgments -->
+            <div class="acknowledgments">
+                <h3>Acknowledgments</h3>
+                
+                <div class="ack-item">
+                    <strong>Dr. Melissa Gymrek</strong> - Principal Investigator<br>
+                    Department of Computer Science and Engineering & Department of Medicine<br>
+                    University of California, San Diego<br>
+                    <a href="https://gymreklab.com/" class="external-link" target="_blank">Gymrek Laboratory</a>
+                    <p><em>We are deeply grateful to Dr. Gymrek for her mentorship, guidance, and for providing the opportunity to contribute to cutting-edge genomics research through the WebSTR project.</em></p>
+                </div>
+                
+                <div class="ack-item">
+                    <strong>Jonathan Margoliash</strong> - Research Inspiration<br>
+                    Department of Computer Science and Engineering<br>
+                    University of California, San Diego<br>
+                    <p><em>We thank Jonathan for his foundational research on STR contributions to complex traits, which directly inspired and informed our visualization platform.</em></p>
+                </div>
+                
+                <div class="ack-item">
+                    <strong>Dr. Alyssa Taylor</strong> - Capstone Course Professor<br>
+                    Department of Bioengineering<br>
+                    University of California, San Diego<br>
+                    <p><em>We appreciate Dr. Taylor's guidance throughout the BENG 187 series, her support of our computational approach, and her commitment to experiential learning.</em></p>
+                </div>
+                
+                <div class="ack-item">
+                    <strong>Meghana Varanasi</strong> - Teaching Assistant<br>
+                    Department of Bioengineering<br>
+                    University of California, San Diego<br>
+                    <p><em>Special thanks to Meghana for her exceptional availability, helpful feedback, and unwavering encouragement throughout our capstone journey.</em></p>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="nav-links">
+            <a href="/">← Home</a>
+            <a href="/browse_traits">Browse Traits</a>
+            <a href="/browse_loci">Browse STR Loci</a>
+            <a href="/database_status">Database Status</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error - Manhattan Plot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .error-container {
+            background-color: white;
+            border-left: 5px solid #dc3545;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .error-title {
+            color: #dc3545;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .error-message {
+            color: #333;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .suggestions {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .suggestions h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .trait-list {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .back-link {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .back-link:hover {
+            background-color: #0056b3;
+        }
+        .setup-link {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 10px 10px 0;
+        }
+        .setup-link:hover {
+            background-color: #1e7e34;
+        }
+        .status-link {
+            display: inline-block;
+            background-color: #17a2b8;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 10px 10px 0;
+        }
+        .status-link:hover {
+            background-color: #117a8b;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-title">⚠️ Error</div>
+        <div class="error-message">{{ error }}</div>
+        
+        {% if available_traits %}
+        <div class="suggestions">
+            <h3>Available Traits:</h3>
+            <div class="trait-list">
+                {% for trait in available_traits %}
+                    {{ trait }}<br>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="suggestions">
+            <h3>💡 What you can do:</h3>
+            <ul>
+                <li><strong>Check the database status</strong> - See what data is available</li>
+                <li><strong>Run the setup script</strong> - If the Manhattan database is missing</li>
+                <li><strong>Verify your parameters</strong> - Make sure trait name and repeat_id are correct</li>
+                <li><strong>Try a different trait</strong> - Some traits may not be loaded yet</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div>
+        <a href="/database_status" class="status-link">📊 Check Database Status</a>
+        <a href="/setup_instructions" class="setup-link">🔧 Setup Instructions</a>
+        <a href="javascript:history.back()" class="back-link">← Go Back</a>
+    </div>
+</body>
+</html>

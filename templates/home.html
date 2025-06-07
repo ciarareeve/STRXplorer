@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STR-GWAS Analysis Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            padding: 60px 0 40px 0;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .header .description {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-top: 40px;
+        }
+
+        /* Navigation Cards */
+        .nav-section {
+            padding: 40px;
+        }
+
+        .nav-section h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .nav-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .nav-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .nav-card .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .nav-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .nav-card p {
+            color: #6c757d;
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+
+        .nav-card .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-card .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Quick Access Section */
+        .quick-access {
+            background: #f8f9fa;
+            padding: 40px;
+        }
+
+        .quick-access h3 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+        }
+
+        .trait-browser {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .trait-select {
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+        }
+
+        .trait-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .go-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .go-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #74b9ff;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: #74b9ff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .about-btn {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .about-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            color: white;
+            text-decoration: none;
+        }
+
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .trait-browser {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <header class="header">
+            <h1>STRXplorer</h1>
+            <div class="subtitle">Short Tandem Repeat Association Analysis Platform</div>
+            <div class="description">
+                Explore genetic associations between short tandem repeats (STRs) and complex traits through interactive Manhattan plots and detailed locus analysis
+            </div>
+            <div style="margin-top: 30px;">
+                <a href="/about" class="about-btn">About This Project</a>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Navigation Section -->
+            <section class="nav-section">
+                <h2>🔍 Explore Your Data</h2>
+                <div class="nav-cards">
+                    <div class="nav-card" onclick="window.location.href='/browse_traits'">
+                        <div>
+                            <div class="icon">📊</div>
+                            <h3>Browse by Trait</h3>
+                            <p>Explore all STR associations for a specific trait. View Manhattan plots for all loci and discover genome-wide patterns of association.</p>
+                        </div>
+                        <a href="/browse_traits" class="btn">Browse Traits</a>
+                    </div>
+
+                    <div class="nav-card" onclick="window.location.href='/browse_loci'">
+                        <div>
+                            <div class="icon">🎯</div>
+                            <h3>Browse by STR Locus</h3>
+                            <p>Investigate specific STR loci across multiple traits. View detailed allele-phenotype relationships and statistical associations.</p>
+                        </div>
+                        <a href="/browse_loci" class="btn">Browse STR Loci</a>
+                    </div>
+
+                    <div class="nav-card" onclick="window.location.href='/database_status'">
+                        <div>
+                            <div class="icon">⚙️</div>
+                            <h3>Database Status</h3>
+                            <p>Check data availability, view processing statistics, and monitor the status of GWAS data loading across all traits.</p>
+                        </div>
+                        <a href="/database_status" class="btn">Check Status</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Access -->
+            <section class="quick-access">
+                <h3>🚀 Quick Access: Jump to Trait Overview</h3>
+                <div class="trait-browser">
+                    <select id="trait-select" class="trait-select">
+                        <option value="">Select a trait to explore...</option>
+                        {% for trait in available_traits %}
+                        <option value="{{ trait }}">{{ trait.replace('_', ' ').title() }}</option>
+                        {% endfor %}
+                    </select>
+                    <button onclick="goToTrait()" class="go-btn">Explore Trait →</button>
+                </div>
+            </section>
+
+            <!-- Statistics -->
+            <section class="stats-section">
+                <h2>📈 Platform Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ stats.total_traits }}</div>
+                        <div class="stat-label">Available Traits</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">~200</div>
+                        <div class="stat-label">STR Loci</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ "{:,}".format(stats.total_variants) if stats.total_variants else "0" }}</div>
+                        <div class="stat-label">GWAS Variants</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ stats.loaded_traits }}</div>
+                        <div class="stat-label">Loaded Traits</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="/setup_instructions">Setup Guide</a>
+                <a href="/database_status">Database Status</a>
+                <a href="/about">About</a>
+                <a href="/api/trait_list">API Documentation</a>
+            </div>
+            <div>
+                <p>&copy; 2025 STRXplorer Platform | Built for genomic discovery</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+    // Simple function to navigate to trait (no AJAX needed)
+    function goToTrait() {
+        const select = document.getElementById('trait-select');
+        const selectedTrait = select.value;
+        
+        if (!selectedTrait) {
+            alert('Please select a trait first');
+            return;
+        }
+        
+        console.log('Navigating to trait:', selectedTrait);
+        window.location.href = `/trait_overview/${selectedTrait}`;
+    }
+    
+    // No need for loadStats() - everything comes from the server!
+    console.log('Home page loaded with server-side data');
+</script>
+</body>
+</html>
