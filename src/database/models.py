@@ -9,9 +9,23 @@ from typing import Optional, Tuple, List
 from config import Config
 
 
-def get_gwas_trait_name(locus_trait_name: str) -> str:
-    """Map locus trait names to GWAS file names"""
-    return Config.TRAIT_NAME_MAPPING.get(locus_trait_name, locus_trait_name)
+def get_gwas_trait_name(trait_name):
+    """
+    Map trait names from locus database to Manhattan database format
+    Handles the naming differences between the two databases
+    """
+    # Mapping from locus DB names (with 'mean_') to Manhattan DB names (without 'mean_')
+    trait_mapping = {
+        'mean_corpuscular_haemoglobin': 'corpuscular_haemoglobin',
+        'mean_corpuscular_volume': 'corpuscular_volume', 
+        'mean_platelet_volume': 'platelet_volume',
+        'mean_sphered_cell_volume': 'sphered_cell_volume',
+        # Add any other mappings as needed
+        # 'locus_db_name': 'manhattan_db_name'
+    }
+    
+    # Return mapped name if it exists, otherwise return original name
+    return trait_mapping.get(trait_name, trait_name)
 
 
 def get_locus_info_from_repeat_id(
