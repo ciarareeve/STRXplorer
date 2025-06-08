@@ -37,7 +37,7 @@ python STRXplorer.py
 This repository comes with everything you need:
 
 ```
-str-gwas-explorer/
+STRXplorer/
 ├── STRXplorer.py             ← Main Flask application
 ├── locus_data.db             ← STR locus information
 ├── manhattan_data.db         ← Pre-loaded GWAS data (LFS-stored)
@@ -103,7 +103,7 @@ The **manhattan\_data.db** contains:
 * **Statistical summaries:** P-values, effect sizes, confidence intervals
 * **Optimized indexes:** Fast querying for real-time plotting
 
-> **💡 Data Source:**
+> **Data Source:**
 > GWAS data from Margoliash *et al.* (2023) study on STR associations with complex traits.
 
 ---
@@ -171,5 +171,5 @@ Make sure **`.gitattributes`** contains:
 
 ---
 
-That’s it—happy exploring STR-GWAS associations!
+That’s it — happy exploring!
 

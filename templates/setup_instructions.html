@@ -129,7 +129,7 @@
         }
         
         .nav-links a {
-            color: #667eea;
+            /* color: #667eea; */
             text-decoration: none;
             margin: 0 15px;
             font-weight: 500;
@@ -150,29 +150,33 @@
         }
         
         .btn {
+            background: linear-gradient(135deg, #396fbb 0%, #218282 20%);
             display: inline-block;
-            background: #667eea;
+            /* background: rgba(255, 255, 255, 0.2); */
             color: white;
-            padding: 10px 20px;
+            padding: 12px 30px;
             text-decoration: none;
-            border-radius: 5px;
-            margin: 10px 10px 10px 0;
+            border-radius: 25px;
             font-weight: bold;
+            font-size: 1.1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
-        
+         
         .btn:hover {
-            background: #5a67d8;
-            color: white;
-            text-decoration: none;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        
         }
         
-        .btn-success {
+        /* .btn-success {
             background: #28a745;
         }
         
         .btn-success:hover {
             background: #218838;
-        }
+        } */
         
         .highlight-box {
             background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
@@ -216,13 +220,13 @@
                 <pre><code>
 # Clone the repository
 git clone https://github.com/ciarareeve/STRXplorer
-cd str-gwas-explorer
+cd STRXplorer
 
 # Install Python dependencies
-pip install flask pandas numpy plotly requests
+pip install flask pandas numpy plotly sqlite3
 
 # Run the application
-python STRXplorer.py
+python app.py
                 </code></pre>
                 </div>
                 
@@ -236,25 +240,41 @@ python STRXplorer.py
                 <h3>Step 2: What's Included</h3>
                 <p>This repository comes with everything you need:</p>
                 
-                <pre class="file-structure">📁 str-gwas-explorer/
-├── 📄 STRXplorer.py                  ← Main Flask application
-├── 🗃️ locus_data.db                  ← STR locus information
-├── 🗃️ manhattan_data.db              ← Pre-loaded GWAS data (ready to use!)
-├── 📄 manhattan_plot.py              ← Plot generation utilities
-├── 📄 locus_plots.py                 ← Additional plotting functions
+                <pre class="file-structure">📁 STRXplorer/
+├── 📄 app.py                         ← Main Flask application
+├── 📄 config.py                      ← Configuration settings
+├── 📁 src/                           ← Source code modules
+│   ├── 📁 database/
+│   │   └── 📄 models.py              ← Database interaction functions
+│   ├── 📁 plots/
+│   │   ├── 📄 manhattan.py           ← Manhattan plot generation
+│   │   └── 📄 locus.py               ← STR locus plot generation
+│   └── 📁 routes/
+│       ├── 📄 main.py                ← Main page routes
+│       ├── 📄 plots.py               ← Plot generation routes
+│       └── 📄 api.py                 ← API endpoints
+├── 📁 data/                          ← Database files
+│   ├── 🗃️ locus_data.db              ← STR locus information
+│   └── 🗃️ manhattan_data.db          ← Pre-loaded GWAS data
 └── 📁 templates/                     ← Web interface templates
     ├── 📄 home.html
     ├── 📄 browse_traits.html
     ├── 📄 browse_loci.html
     ├── 📄 trait_overview.html
+    ├── 📄 locus_trait_overview.html
+    ├── 📄 locus_plot.html
+    ├── 📄 manhattan_plot.html
     └── 📄 ... (other templates)</pre>
                 
                 <div class="requirements-list">
                     <ul>
+                        <li><strong>Modular architecture</strong> with organized source code</li>
                         <li><strong>Pre-loaded GWAS data</strong> for dozens of traits</li>
                         <li><strong>STR locus database</strong> with genomic coordinates</li>
                         <li><strong>Interactive web interface</strong> for data exploration</li>
                         <li><strong>Manhattan plot generation</strong> for any trait/locus combination</li>
+                        <li><strong>STR allele-phenotype plots</strong> for detailed analysis</li>
+                        <li><strong>API endpoints</strong> for programmatic access</li>
                         <li><strong>No internet required</strong> for basic functionality</li>
                     </ul>
                 </div>
@@ -268,17 +288,20 @@ python STRXplorer.py
                 <ol>
                     <li><strong>Browse Traits:</strong> View all available traits at <code>/browse_traits</code></li>
                     <li><strong>Browse STR Loci:</strong> Explore STR locations at <code>/browse_loci</code></li>
-                    <li><strong>Generate Manhattan Plots:</strong> Click any trait to see all associated plots</li>
+                    <li><strong>Generate Manhattan Plots:</strong> Click any trait to see genome-wide association plots</li>
+                    <li><strong>View STR Locus Plots:</strong> Explore allele-phenotype relationships</li>
                     <li><strong>Check Status:</strong> Monitor system health at <code>/database_status</code></li>
                 </ol>
                 <div class="code-block">
                 <pre><code>
 # Example URLs to explore:
-http://localhost:5000/                          
-http://localhost:5000/browse_traits             
-http://localhost:5000/browse_loci               
-http://localhost:5000/trait_overview/mean_platelet_volume  
-http://localhost:5000/database_status          
+http://localhost:5000/                                      ← Home page
+http://localhost:5000/browse_traits                         ← All traits
+http://localhost:5000/browse_loci                           ← All STR loci
+http://localhost:5000/trait_overview/platelet_crit          ← Manhattan plots
+http://localhost:5000/locus_trait_overview/platelet_crit    ← STR locus plots
+http://localhost:5000/database_status                       ← System status
+http://localhost:5000/api/trait_list                        ← API endpoint
             </code></pre>
             </div>
             </div>
@@ -291,8 +314,8 @@ http://localhost:5000/database_status
                 <div class="requirements-list">
                     <ul>
                         <li>Python 3.8 or higher</li>
-                        <li>2GB RAM (4GB recommended)</li>
-                        <li>1GB free disk space</li>
+                        <li>4GB RAM (8GB recommended for large datasets)</li>
+                        <li>2GB free disk space</li>
                         <li>Modern web browser (Chrome, Firefox, Safari, Edge)</li>
                     </ul>
                 </div>
@@ -304,21 +327,34 @@ flask          # Web framework
 pandas         # Data manipulation
 numpy          # Numerical computing
 plotly         # Interactive plotting
-requests       # HTTP requests (for future data updates)
+sqlite3        # Database operations (usually built-in)
                 </code></pre>
 </div>
+                
+                <div class="info">
+                    <strong>💡 Note:</strong> SQLite3 is typically included with Python installations. If you encounter issues, install it with <code>pip install pysqlite3</code>
+                </div>
             </div>
             
             <!-- Step 5: Data Overview -->
             <div class="step">
                 <h3>Step 5: Pre-loaded Data Overview</h3>
-                <p>The <code>manhattan_data.db</code> contains:</p>
+                <p>The databases in the <code>data/</code> directory contain:</p>
                 
+                <h4>manhattan_data.db:</h4>
                 <ul>
                     <li><strong>Multiple traits:</strong> Blood traits, anthropometric measures, and more</li>
                     <li><strong>Millions of variants:</strong> Genome-wide association data</li>
                     <li><strong>Statistical summaries:</strong> P-values, effect sizes, confidence intervals</li>
                     <li><strong>Optimized indexes:</strong> Fast querying for real-time plotting</li>
+                </ul>
+                
+                <h4>locus_data.db:</h4>
+                <ul>
+                    <li><strong>STR locus information:</strong> Genomic coordinates and repeat motifs</li>
+                    <li><strong>Allele-phenotype data:</strong> Individual allele effect sizes</li>
+                    <li><strong>Sample counts:</strong> Number of individuals per allele</li>
+                    <li><strong>Confidence intervals:</strong> Statistical uncertainty estimates</li>
                 </ul>
                 
                 <div class="info">
@@ -334,63 +370,113 @@ requests       # HTTP requests (for future data updates)
                 
                 <div class="warning">
                     <strong>Application won't start:</strong>
-                    <br>• Check Python version: <code>python --version</code>
+                    <br>• Check Python version: <code>python --version</code> (should be 3.8+)
                     <br>• Install missing packages: <code>pip install flask pandas numpy plotly</code>
-                    <br>• Ensure you're in the correct directory
+                    <br>• Ensure you're in the STRXplorer root directory
+                    <br>• Check if port 5000 is already in use
                 </div>
                 
                 <div class="warning">
                     <strong>Database errors:</strong>
-                    <br>• Verify both <code>.db</code> files are present
+                    <br>• Verify both <code>data/locus_data.db</code> and <code>data/manhattan_data.db</code> exist
                     <br>• Check file permissions (should be readable)
+                    <br>• Ensure the <code>data/</code> directory structure is intact
                     <br>• Try running from the repository root directory
                 </div>
                 
                 <div class="warning">
                     <strong>No plots showing:</strong>
                     <br>• Check the <a href="/database_status">Database Status</a> page
+                    <br>• Verify JavaScript is enabled in your browser
                     <br>• Try refreshing the browser
                     <br>• Clear browser cache if plots appear corrupted
+                    <br>• Check browser console for error messages (F12 → Console)
                 </div>
                 
                 <div class="warning">
                     <strong>Port already in use:</strong>
-                    <br>• Kill existing Flask processes: <code>pkill -f flask</code>
-                    <br>• Or specify a different port: <code>flask run --port 5001</code>
+                    <br>• Kill existing Flask processes: <code>pkill -f flask</code> or <code>pkill -f python</code>
+                    <br>• Or specify a different port: Edit <code>app.py</code> and change <code>app.run(port=5001)</code>
+                    <br>• Find what's using port 5000: <code>lsof -i :5000</code> (Mac/Linux) or <code>netstat -ano | findstr :5000</code> (Windows)
+                </div>
+                
+                <div class="warning">
+                    <strong>Import errors:</strong>
+                    <br>• Make sure you're running Python from the STRXplorer directory
+                    <br>• Check if the <code>src/</code> directory structure is intact
+                    <br>• Verify all <code>__init__.py</code> files exist (if any)
+                    <br>• Try running with <code>python -m flask run</code> instead
                 </div>
             </div>
             
-            <!-- Step 7: Advanced Usage
+            <!-- Step 7: Advanced Usage -->
             <div class="step">
                 <h3>Step 7: Advanced Usage (Optional)</h3>
                 
-                <h4>Adding New Traits:</h4>
-                <p>To add additional GWAS data not included in the pre-loaded database:</p>
+                <h4>Configuration:</h4>
+                <p>Modify <code>config.py</code> to customize database paths and other settings:</p>
                 
                 <div class="code-block">
                 <pre><code>
-# The platform can download additional traits automatically
-# when you access them for the first time. New traits will be
-# added to manhattan_data.db for future use.
-
-# Example: Access a new trait (will trigger download if not in DB)
-http://localhost:5000/trait_overview/new_trait_name
+# Example config.py modifications
+class Config:
+    LOCUS_DB_PATH = "data/locus_data.db"           # STR locus database
+    MANHATTAN_DB_PATH = "data/manhattan_data.db"   # GWAS data database
+    DEBUG = True                                   # Enable debug mode
+    PORT = 5000                                    # Change default port
 </code></pre>
 </div>
                 
                 <h4>Database Maintenance:</h4>
                 <div class="code-block">
                 <pre><code>
-# Optional: Add database indexes for better performance
-sqlite3 manhattan_data.db
-CREATE INDEX IF NOT EXISTS idx_trait_chrom_pos ON gwas_variants(trait_name, chrom, pos);
-CREATE INDEX IF NOT EXISTS idx_locus_trait ON locus_data(trait_name);
+# Optional: Check database integrity
+sqlite3 data/manhattan_data.db
+.schema
+SELECT COUNT(*) FROM gwas_variants;
+.exit
+
+# Check STR locus data
+sqlite3 data/locus_data.db
+.schema  
+SELECT COUNT(*) FROM locus_data;
 .exit
 </code></pre>
 </div>
                 
-                <h4>Custom Data:</h4>
-                <p>To work with your own STR loci or traits, modify the <code>locus_data.db</code> database with your data following the existing schema.</p>
+                <h4>API Usage:</h4>
+                <p>Access data programmatically through the API endpoints:</p>
+                <div class="code-block">
+                <pre><code>
+# Get list of available traits
+curl http://localhost:5000/api/trait_list
+
+# Get database status information
+curl http://localhost:5000/database_status_json
+</code></pre>
+</div>
+            </div>
+            
+            <!-- Step 8: Development -->
+            <div class="step">
+                <h3>Step 8: Development & Customization</h3>
+                
+                <h4>File Structure Explanation:</h4>
+                <ul>
+                    <li><strong>app.py:</strong> Main Flask application entry point</li>
+                    <li><strong>src/routes/:</strong> URL routing and view functions</li>
+                    <li><strong>src/plots/:</strong> Plot generation logic</li>
+                    <li><strong>src/database/:</strong> Database interaction functions</li>
+                    <li><strong>templates/:</strong> HTML templates for web interface</li>
+                    <li><strong>data/:</strong> SQLite databases with GWAS and STR data</li>
+                </ul>
+                
+                <h4>Adding Custom Data:</h4>
+                <p>To work with your own data, modify the database files or create new ones following the existing schema. Check the database status page to understand the current data structure.</p>
+                
+                <div class="info">
+                    <strong>💡 Tip:</strong> Use the database status page at <code>/database_status</code> to monitor your data and ensure everything is loading correctly.
+                </div>
             </div>
         </div>
         
@@ -399,6 +485,6 @@ CREATE INDEX IF NOT EXISTS idx_locus_trait ON locus_data(trait_name);
             <a href="/database_status" class="btn btn-success">Check Database Status</a>
             <a href="/browse_traits" class="btn">Browse Traits</a>
         </div>
-    </div> -->
+    </div>
 </body>
 </html>

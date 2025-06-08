@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STR-GWAS Analysis Platform</title>
+    <title>STRXplorer</title>
     <style>
         * {
             margin: 0;
@@ -15,9 +15,16 @@
             font-family: 'Arial', sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* background: radial-gradient(circle at 100%, #115bca, #115bca 50%, #CE9A17 75%, #115bca 75%); */
+
+            /* background: radial-gradient(135deg, #667eea 0%, #CE9A17 100%); */
+            background: linear-gradient(135deg, #115bca 0%, #286988 30%, #348589 60%, #166423 100%); 
+        /* background:
+            radial-gradient(ellipse 150% 80% at top, #1d53a4, transparent),
+            radial-gradient(ellipse 150% 80% at bottom, #c7920a, transparent); */
             min-height: 100vh;
         }
+
 
         .container {
             max-width: 1200px;
@@ -118,7 +125,7 @@
         }
 
         .nav-card .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #396fbb 0%, #218282 100%);
             color: white;
             padding: 12px 25px;
             border: none;
@@ -218,12 +225,15 @@
             opacity: 0.9;
         }
 
+
         /* Footer */
         .footer {
             background: #2c3e50;
             color: white;
             padding: 30px;
             text-align: center;
+            margin: 0;
+            border-radius: 20px;
         }
 
         .footer-links {
@@ -318,7 +328,8 @@
 
                     <div class="nav-card" onclick="window.location.href='/browse_loci'">
                         <div>
-                            <div class="icon">🎯</div>
+                            <div class="icon">🔬
+                            </div>
                             <h3>Browse by STR Locus</h3>
                             <p>Investigate specific STR loci across multiple traits. View detailed allele-phenotype relationships and statistical associations.</p>
                         </div>

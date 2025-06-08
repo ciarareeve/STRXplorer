@@ -79,43 +79,94 @@
         color: #495057;
       }
 
-      select, input, button {
+      select, input {
         padding: 8px 12px;
         border-radius: 4px;
         border: 1px solid #ced4da;
         font-size: 14px;
       }
-      
-      button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        cursor: pointer;
+
+      /* Updated button styling to match overview pages */
+      .nav-btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
         font-weight: bold;
-        transition: background-color 0.3s;
-      }
-      
-      button:hover {
-        background-color: #0056b3;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        border: 2px solid #667eea;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        cursor: pointer;
+        background: white;
+        color: #667eea;
+        margin-right: 10px;
+        margin-bottom: 10px;
       }
 
-      .btn-secondary {
-        background-color: #6c757d;
+      .nav-btn:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        text-decoration: none;
       }
 
-      .btn-secondary:hover {
-        background-color: #545b62;
+      .nav-btn.secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #6c757d;
+        border-color: #6c757d;
+      }
+
+      .nav-btn.secondary:hover {
+        background: #6c757d;
+        color: white;
+        border-color: #6c757d;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+
+      /* Button group styling */
+      .button-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
       }
       
       .threshold-btn {
-        background-color: #6c757d;
-        margin-right: 5px;
-        padding: 6px 12px;
+        background: white;
+        color: #6c757d;
+        border: 2px solid #6c757d;
+        padding: 8px 16px;
+        border-radius: 6px;
         font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 5px;
+        margin-bottom: 5px;
+      }
+      
+      .threshold-btn:hover {
+        background: #6c757d;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       }
       
       .threshold-btn.active {
-        background-color: #007bff;
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+      }
+
+      .threshold-btn.active:hover {
+        background: #5a6fd8;
+        border-color: #5a6fd8;
       }
 
       .info-panel {
@@ -172,7 +223,7 @@
       
       .spinner {
         border: 4px solid #f3f3f3;
-        border-top: 4px solid #007bff;
+        border-top: 4px solid #667eea;
         border-radius: 50%;
         width: 50px;
         height: 50px;
@@ -185,42 +236,54 @@
       }
       
       .navigation {
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: #e9ecef;
-            border-radius: 5px;
-        }
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #e9ecef;
+        border-radius: 5px;
+      }
 
       .nav-links {
         margin-top: 20px;
         padding-top: 20px;
         border-top: 1px solid #dee2e6;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
       }
-      
-      .nav-links a {
-        color: #007bff;
-        text-decoration: none;
-        font-weight: 500;
-        margin-right: 20px;
-        display: inline-block;
-        padding: 8px 12px;
-        border: 1px solid #007bff;
-        border-radius: 4px;
-        transition: all 0.3s;
-      }
-      
-      .nav-links a:hover {
-        background-color: #007bff;
-        color: white;
-        text-decoration: none;
+
+      @media (max-width: 768px) {
+        .button-group {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        
+        .nav-btn {
+          justify-content: center;
+          width: 100%;
+          margin-right: 0;
+        }
+        
+        .nav-links {
+          flex-direction: column;
+        }
+
+        .threshold-buttons {
+          text-align: left !important;
+        }
+
+        .threshold-btn {
+          margin-bottom: 10px;
+          display: block;
+          width: 100%;
+        }
       }
     </style>
 </head>
 <body>
     <div class="container">
       <div class="navigation">
-            <a href="/" class="nav-link">← Home</a>
-        </div>
+        <a href="/" class="nav-link">← Home</a>
+      </div>
         <!-- Breadcrumbs -->
         {% if breadcrumbs %}
         <div class="breadcrumbs">
@@ -263,10 +326,16 @@
             
             <div class="control-group">
               <label>&nbsp;</label>
-              <div>
-                <button onclick="viewTraitOverview()" class="btn-secondary">View All {{ trait_name.replace("_", " ").title() }} Plots</button>
-                <button onclick="updateThresholdOnly()">Update Threshold</button>
-                <button onclick="downloadPlotData()" class="btn-secondary">Download Data</button>
+              <div class="button-group">
+                <button onclick="viewTraitOverview()" class="nav-btn">
+                   View All {{ trait_name.replace("_", " ").title() }} Plots
+                </button>
+                <button onclick="updateThresholdOnly()" class="nav-btn">
+                   Update Threshold
+                </button>
+                <button onclick="downloadPlotData()" class="nav-btn">
+                   Download Data
+                </button>
               </div>
             </div>
           </div>
@@ -308,9 +377,13 @@
         </div>
         
         <div class="nav-links">
-          <a href="/locus_plot?repeat_id={{ repeat_id }}">📊 View STR Locus Plot</a>
+          <a href="/locus_plot?repeat_id={{ repeat_id }}" class="nav-btn">
+             View STR Locus Plot
+          </a>
           {% if show_trait_overview_link %}
-          <a href="/trait_overview/{{ trait_name }}">View All {{ trait_name.replace("_", " ").title() }} Plots</a>
+          <a href="/trait_overview/{{ trait_name }}" class="nav-btn">
+            View All {{ trait_name.replace("_", " ").title() }} Plots
+          </a>
           {% endif %}
         </div>
     </div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ trait_name.replace("_", " ").title() }} - STR Association Overview</title>
+    <title>{{ trait_name.replace("_", " ").title() }} - STR Locus Overview</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body {
@@ -21,7 +21,7 @@
             text-align: center;
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #007bff;
+            border-bottom: 2px solid #28a745;
         }
         .header h1 {
             color: #333;
@@ -51,7 +51,7 @@
         .stat-number {
             font-size: 24px;
             font-weight: bold;
-            color: #007bff;
+            color: #28a745;
         }
         .stat-label {
             font-size: 12px;
@@ -94,7 +94,7 @@
         .plot-container {
             padding: 10px;
         }
-        .significance-badge {
+        .effect-badge {
             display: inline-block;
             padding: 2px 8px;
             border-radius: 12px;
@@ -102,17 +102,13 @@
             font-weight: bold;
             margin-left: 10px;
         }
-        .significance-high {
-            background-color: #dc3545;
-            color: white;
+        .effect-positive {
+            background-color: #d4edda;
+            color: #155724;
         }
-        .significance-moderate {
-            background-color: #ffc107;
-            color: #212529;
-        }
-        .significance-low {
-            background-color: #6c757d;
-            color: white;
+        .effect-negative {
+            background-color: #f8d7da;
+            color: #721c24;
         }
         .navigation {
             margin-bottom: 20px;
@@ -127,20 +123,6 @@
         }
         .nav-link:hover {
             text-decoration: underline;
-        }
-        .loading {
-            text-align: center;
-            color: #6c757d;
-            font-style: italic;
-            padding: 50px;
-        }
-        .no-data {
-            text-align: center;
-            color: #6c757d;
-            padding: 50px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            margin: 20px 0;
         }
         .filter-controls {
             margin: 20px 0;
@@ -158,12 +140,29 @@
             border-radius: 4px;
             margin-right: 20px;
         }
-        .nav-button-group {
-            margin-top: 20px;
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .no-data {
+            text-align: center;
+            color: #6c757d;
+            padding: 50px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .switch-view-btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .switch-view-btn:hover {
+            background: #0056b3;
+            color: white;
+            text-decoration: none;
         }
 
         .nav-button-group {
@@ -231,22 +230,25 @@
                 justify-content: center;
             }
         }
+
+
     </style>
 </head>
 <body>
     <div class="container">
         <div class="navigation">
             <a href="/" class="nav-link">← Home</a>
-            <a href="/database_status" class="nav-link">Database Status</a>
-            <span style="color: #6c757d;">Current: {{ trait_name.replace("_", " ").title() }} Overview</span>
+            <a href="/browse_traits" class="nav-link">Browse Traits</a>
+            <a href="/trait_overview/{{ trait_name }}" class="nav-link">Manhattan Plot View</a>
+            <span style="color: #6c757d;">Current: {{ trait_name.replace("_", " ").title() }} STR Locus Overview</span>
         </div>
         
         <div class="header">
             <h1>{{ trait_name.replace("_", " ").title() }}</h1>
-            <div class="subtitle">STR Association Overview - Manhattan Plots</div>
+            <div class="subtitle">STR Locus Overview - Allele-Phenotype Associations</div>
             <div class="nav-button-group">
-                <a href="/browse_traits" class="nav-btn primary">← Browse Traits</a>
-                <a href="/locus_trait_overview/{{ trait_name }}" class="nav-btn primary">Switch to Locus Plot View</a>
+                <a href="/browse_loci" class="nav-btn primary">← Browse STR Loci</a>
+                <a href="/trait_overview/{{ trait_name }}" class="nav-btn primary">Switch to Manhattan Plot View</a>
             </div>
         </div>
         
@@ -257,7 +259,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-number">{{ available_loci }}</div>
-                <div class="stat-label">With GWAS Data</div>
+                <div class="stat-label">With Allele Data</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">{{ plot_data|length }}</div>
@@ -269,45 +271,42 @@
         <div class="filter-controls">
             <label for="sort-by">Sort by:</label>
             <select id="sort-by" onchange="sortPlots()">
-                <option value="significance">Significance (highest first)</option>
+                <option value="effect">Effect size (largest first)</option>
                 <option value="chromosome">Chromosome position</option>
-                <option value="variants">Variant count</option>
+                <option value="alleles">Number of alleles</option>
+                <option value="samples">Total samples</option>
             </select>
             
-            <label for="filter-significance">Filter by significance:</label>
-            <select id="filter-significance" onchange="filterPlots()">
-                <option value="all">All plots</option>
-                <option value="high">High significance only (p < 5e-8)</option>
-                <option value="moderate">Moderate+ significance (p < 1e-5)</option>
+            <label for="filter-direction">Filter by effect:</label>
+            <select id="filter-direction" onchange="filterPlots()">
+                <option value="all">All effects</option>
+                <option value="positive">Positive effects only</option>
+                <option value="negative">Negative effects only</option>
             </select>
         </div>
         
         <div class="plot-grid" id="plot-grid">
             {% for plot in plot_data %}
             <div class="plot-card" 
-                 data-significance="{{ plot.max_significance }}"
+                 data-effect="{{ plot.mean_effect }}"
+                 data-direction="{{ plot.effect_direction }}"
                  data-chromosome="{{ plot.locus.chrom }}"
                  data-position="{{ plot.locus.pos }}"
-                 data-variants="{{ plot.variant_count }}"
-                 onclick="openDetailedPlot('{{ trait_name }}', '{{ plot.locus.repeat_id }}')">
+                 data-alleles="{{ plot.allele_count }}"
+                 data-samples="{{ plot.total_samples }}"
+                 onclick="openDetailedLocus('{{ plot.locus.repeat_id }}', '{{ trait_name }}')">
                 
                 <div class="plot-header">
                     <div class="plot-title">
                         STR {{ plot.locus.repeat_id }}
-                        {% if plot.max_significance >= 7.3 %}
-                            <span class="significance-badge significance-high">Genome-wide Significant</span>
-                        {% elif plot.max_significance >= 5 %}
-                            <span class="significance-badge significance-moderate">Suggestive</span>
-                        {% else %}
-                            <span class="significance-badge significance-low">Not Significant</span>
-                        {% endif %}
+                        <span class="effect-badge effect-{{ 'positive' if plot.effect_direction == '+' else 'negative' }}">
+                            {{ plot.effect_direction }} Effect
+                        </span>
                     </div>
                     <div class="plot-info">{{ plot.locus.location }}</div>
                     <div class="plot-info">Motif: {{ plot.locus.motif or 'N/A' }}</div>
-                    <div class="plot-info">{{ "{:,}".format(plot.variant_count) }} variants</div>
-                    {% if plot.max_significance > 0 %}
-                    <div class="plot-info">Max -log₁₀(p): {{ "%.1f"|format(plot.max_significance) }}</div>
-                    {% endif %}
+                    <div class="plot-info">{{ plot.allele_count }} alleles, {{ "{:,}".format(plot.total_samples) }} samples</div>
+                    <div class="plot-info">⚡ Effect: {{ "%.3f"|format(plot.mean_effect) }}</div>
                 </div>
                 
                 <div class="plot-container">
@@ -324,10 +323,12 @@
                 {
                     repeat_id: "{{ plot.locus.repeat_id }}",
                     plot_json: {{ plot.plot_json|safe }},
-                    significance: {{ plot.max_significance }},
+                    effect: {{ plot.mean_effect }},
+                    direction: "{{ plot.effect_direction }}",
                     chromosome: "{{ plot.locus.chrom }}",
                     position: {{ plot.locus.pos }},
-                    variants: {{ plot.variant_count }}
+                    alleles: {{ plot.allele_count }},
+                    samples: {{ plot.total_samples }}
                 }{% if not loop.last %},{% endif %}
                 {% endfor %}
             ];
@@ -340,8 +341,8 @@
                              {responsive: true, displayModeBar: false});
             });
             
-            function openDetailedPlot(trait, repeatId) {
-                const url = `/manhattan_plot?trait=${trait}&repeat_id=${repeatId}`;
+            function openDetailedLocus(repeatId, trait) {
+                const url = `/locus_plot?repeat_id=${repeatId}&trait=${trait}`;
                 window.open(url, '_blank');
             }
             
@@ -352,15 +353,17 @@
                 
                 cards.sort(function(a, b) {
                     switch(sortBy) {
-                        case 'significance':
-                            return parseFloat(b.dataset.significance) - parseFloat(a.dataset.significance);
+                        case 'effect':
+                            return parseFloat(b.dataset.effect) - parseFloat(a.dataset.effect);
                         case 'chromosome':
                             const chromA = parseInt(a.dataset.chromosome);
                             const chromB = parseInt(b.dataset.chromosome);
                             if (chromA !== chromB) return chromA - chromB;
                             return parseInt(a.dataset.position) - parseInt(b.dataset.position);
-                        case 'variants':
-                            return parseInt(b.dataset.variants) - parseInt(a.dataset.variants);
+                        case 'alleles':
+                            return parseInt(b.dataset.alleles) - parseInt(a.dataset.alleles);
+                        case 'samples':
+                            return parseInt(b.dataset.samples) - parseInt(a.dataset.samples);
                         default:
                             return 0;
                     }
@@ -371,19 +374,19 @@
             }
             
             function filterPlots() {
-                const filterBy = document.getElementById('filter-significance').value;
+                const filterBy = document.getElementById('filter-direction').value;
                 const cards = document.querySelectorAll('.plot-card');
                 
                 cards.forEach(function(card) {
-                    const significance = parseFloat(card.dataset.significance);
+                    const direction = card.dataset.direction;
                     let show = true;
                     
                     switch(filterBy) {
-                        case 'high':
-                            show = significance >= 7.3; // p < 5e-8
+                        case 'positive':
+                            show = direction === '+';
                             break;
-                        case 'moderate':
-                            show = significance >= 5; // p < 1e-5
+                        case 'negative':
+                            show = direction === '-';
                             break;
                         case 'all':
                         default:
@@ -397,16 +400,16 @@
         
         {% else %}
         <div class="no-data">
-            <h3>No Manhattan Plot Data Available</h3>
-            <p>No GWAS data found for any STR loci associated with {{ trait_name.replace("_", " ").title() }}.</p>
+            <h3>No STR Locus Data Available</h3>
+            <p>No allele-phenotype association data found for STR loci associated with {{ trait_name.replace("_", " ").title() }}.</p>
             <p>This could mean:</p>
             <ul style="text-align: left; display: inline-block;">
-                <li>The trait data hasn't been loaded into the Manhattan database yet</li>
-                <li>The trait name doesn't match available GWAS files</li>
-                <li>No significant associations exist for this trait</li>
+                <li>The STR loci data hasn't been processed yet</li>
+                <li>No significant allele associations exist for this trait</li>
+                <li>The allele data is stored in a different format</li>
             </ul>
-            <p><a href="/database_status" class="nav-link">Check Database Status</a> | 
-               <a href="/setup_instructions" class="nav-link">Setup Instructions</a></p>
+            <p><a href="/trait_overview/{{ trait_name }}" class="nav-link">Try Manhattan Plot View</a> | 
+               <a href="/database_status" class="nav-link">Check Database Status</a></p>
         </div>
         {% endif %}
     </div>
