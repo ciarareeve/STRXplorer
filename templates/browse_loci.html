@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse STR Loci - STR-GWAS Explorer</title>
+    <title>Browse STR Loci - STRXplorer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -113,12 +113,18 @@
             padding: 15px;
             transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
         }
         
         .locus-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             border-color: #667eea;
+        }
+        
+        .locus-card.expanded {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
         .locus-header {
@@ -167,6 +173,86 @@
             font-size: 0.8rem;
             margin-top: 8px;
             display: inline-block;
+        }
+        
+        .plot-options {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .plot-options.visible {
+            display: block;
+        }
+        
+        .plot-option-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .plot-option-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 16px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .plot-option-btn:hover {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .plot-option-btn.disabled {
+            border-color: #6c757d;
+            color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .plot-option-btn.disabled:hover {
+            background: white;
+            color: #6c757d;
+        }
+        
+        .plot-option-icon {
+            font-size: 1.2rem;
+        }
+        
+        .plot-option-label {
+            font-size: 0.9rem;
+        }
+        
+        .plot-option-desc {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+        
+        .expand-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.2rem;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+        
+        .locus-card.expanded .expand-indicator {
+            transform: rotate(180deg);
         }
 
         .navigation {
@@ -255,7 +341,9 @@
                          data-trait="{{ locus.trait }}" 
                          data-motif="{{ locus.motif }}"
                          data-repeat-id="{{ locus.repeat_id }}"
-                         onclick="viewLocus('{{ locus.repeat_id }}')">
+                         onclick="toggleLocusOptions('{{ locus.repeat_id }}', '{{ locus.trait }}')">
+                        
+                        <div class="expand-indicator">⌄</div>
                         
                         <div class="locus-header">
                             <div class="repeat-id">{{ locus.repeat_id }}</div>
@@ -274,6 +362,31 @@
                         </div>
                         
                         <div class="trait-badge">{{ locus.display_name }}</div>
+                        
+                        <div class="plot-options" id="options-{{ locus.repeat_id }}">
+                            <div class="plot-option-buttons">
+                                <a href="/locus_plot?repeat_id={{ locus.repeat_id }}&trait={{ locus.trait }}" 
+                                   class="plot-option-btn" onclick="event.stopPropagation();">
+                                    <span class="plot-option-label">STR Locus Plot</span>
+                                    <span class="plot-option-desc">Individual allele analysis</span>
+                                </a>
+                                
+                                <!-- Check if Manhattan data available for this trait -->
+                                {% set gwas_trait = trait_mapping.get(locus.trait, locus.trait) %}
+                                {% if gwas_trait in available_manhattan_traits %}
+                                <a href="/manhattan_plot?repeat_id={{ locus.repeat_id }}&trait={{ locus.trait }}" 
+                                   class="plot-option-btn" onclick="event.stopPropagation();">
+                                    <span class="plot-option-label">Manhattan Plot</span>
+                                    <span class="plot-option-desc">Regional GWAS view</span>
+                                </a>
+                                {% else %}
+                                <div class="plot-option-btn disabled" title="No Manhattan plot data available for this trait">
+                                    <span class="plot-option-label">Manhattan Plot</span>
+                                    <span class="plot-option-desc">No GWAS data</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -289,9 +402,30 @@
     </div>
     
     <script>
-        function viewLocus(repeatId) {
-            // Navigate to locus plot page
-            window.location.href = `/locus_plot?repeat_id=${repeatId}`;
+        let currentlyExpanded = null;
+        
+        function toggleLocusOptions(repeatId, trait) {
+            const optionsDiv = document.getElementById(`options-${repeatId}`);
+            const locusCard = optionsDiv.closest('.locus-card');
+            
+            // Close currently expanded card if different
+            if (currentlyExpanded && currentlyExpanded !== repeatId) {
+                const currentOptions = document.getElementById(`options-${currentlyExpanded}`);
+                const currentCard = currentOptions.closest('.locus-card');
+                currentOptions.classList.remove('visible');
+                currentCard.classList.remove('expanded');
+            }
+            
+            // Toggle current card
+            if (optionsDiv.classList.contains('visible')) {
+                optionsDiv.classList.remove('visible');
+                locusCard.classList.remove('expanded');
+                currentlyExpanded = null;
+            } else {
+                optionsDiv.classList.add('visible');
+                locusCard.classList.add('expanded');
+                currentlyExpanded = repeatId;
+            }
         }
         
         function showChromosome(chrom) {
@@ -365,11 +499,33 @@
                     card.classList.remove('hidden');
                 } else {
                     card.classList.add('hidden');
+                    // Close expanded options if hiding card
+                    const optionsDiv = card.querySelector('.plot-options');
+                    if (optionsDiv && optionsDiv.classList.contains('visible')) {
+                        optionsDiv.classList.remove('visible');
+                        card.classList.remove('expanded');
+                        if (currentlyExpanded === card.getAttribute('data-repeat-id')) {
+                            currentlyExpanded = null;
+                        }
+                    }
                 }
             });
             
             updateStats();
         }
+        
+        // Close options when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.locus-card')) {
+                if (currentlyExpanded) {
+                    const currentOptions = document.getElementById(`options-${currentlyExpanded}`);
+                    const currentCard = currentOptions.closest('.locus-card');
+                    currentOptions.classList.remove('visible');
+                    currentCard.classList.remove('expanded');
+                    currentlyExpanded = null;
+                }
+            }
+        });
     </script>
 </body>
 </html>

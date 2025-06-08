@@ -1,9 +1,10 @@
+<!-- Updated browse_traits.html with expandable trait cards -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Traits - STR-GWAS Explorer</title>
+    <title>Browse Traits - STRXplorer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -65,12 +66,18 @@
             padding: 20px;
             transition: all 0.3s ease;
             cursor: pointer;
+            position: relative;
         }
         
         .trait-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border-color: #667eea;
+        }
+        
+        .trait-card.expanded {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .trait-card.no-data {
@@ -115,6 +122,73 @@
             color: #721c24;
         }
         
+        .plot-options {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .plot-options.visible {
+            display: block;
+        }
+        
+        .plot-option-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .plot-option-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 16px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .plot-option-btn:hover {
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .plot-option-btn.disabled {
+            border-color: #6c757d;
+            color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .plot-option-btn.disabled:hover {
+            background: white;
+            color: #6c757d;
+        }
+        
+        .plot-option-icon {
+            font-size: 1.2rem;
+        }
+        
+        .plot-option-label {
+            font-size: 0.9rem;
+        }
+        
+        .plot-option-desc {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+        
         .navigation {
             margin-bottom: 20px;
             padding: 10px;
@@ -122,7 +196,6 @@
             border-radius: 5px;
         }
 
-        
         .nav-links {
             padding: 20px;
             background: #f8f9fa;
@@ -138,6 +211,19 @@
         
         .nav-links a:hover {
             text-decoration: underline;
+        }
+        
+        .expand-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.2rem;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+        
+        .trait-card.expanded .expand-indicator {
+            transform: rotate(180deg);
         }
     </style>
 </head>
@@ -161,7 +247,9 @@
             <div class="trait-card {% if not trait.has_data %}no-data{% endif %}" 
                  data-trait="{{ trait.trait }}" 
                  data-name="{{ trait.display_name|lower }}"
-                 onclick="{% if trait.has_data %}goToTrait('{{ trait.trait }}'){% endif %}">
+                 onclick="{% if trait.has_data %}toggleTraitOptions('{{ trait.trait }}'){% endif %}">
+                
+                <div class="expand-indicator">⌄</div>
                 
                 <div class="trait-name">{{ trait.display_name }}</div>
                 
@@ -179,8 +267,25 @@
                 {% endif %}
                 
                 {% if trait.has_data %}
-                <div style="margin-top: 15px; text-align: center;">
-                    <span style="color: #667eea; font-weight: bold;">Click to explore →</span>
+                <div class="plot-options" id="options-{{ trait.trait }}">
+                    <div class="plot-option-buttons">
+                        <a href="/trait_overview/{{ trait.trait }}" class="plot-option-btn" onclick="event.stopPropagation();">
+                            <span class="plot-option-label">Manhattan Plots</span>
+                            <span class="plot-option-desc">GWAS association plots</span>
+                        </a>
+                        
+                        {% if trait.has_locus_data %}
+                        <a href="/locus_trait_overview/{{ trait.trait }}" class="plot-option-btn" onclick="event.stopPropagation();">
+                            <span class="plot-option-label">STR Locus Plots</span>
+                            <span class="plot-option-desc">Allele-phenotype associations</span>
+                        </a>
+                        {% else %}
+                        <div class="plot-option-btn disabled" title="No allele data available for this trait">
+                            <span class="plot-option-label">STR Locus Plots</span>
+                            <span class="plot-option-desc">No allele data</span>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
                 {% else %}
                 <div style="margin-top: 15px; text-align: center; color: #6c757d;">
@@ -199,8 +304,30 @@
     </div>
     
     <script>
-        function goToTrait(traitName) {
-            window.location.href = `/trait_overview/${traitName}`;
+        let currentlyExpanded = null;
+        
+        function toggleTraitOptions(traitName) {
+            const optionsDiv = document.getElementById(`options-${traitName}`);
+            const traitCard = optionsDiv.closest('.trait-card');
+            
+            // Close currently expanded card if different
+            if (currentlyExpanded && currentlyExpanded !== traitName) {
+                const currentOptions = document.getElementById(`options-${currentlyExpanded}`);
+                const currentCard = currentOptions.closest('.trait-card');
+                currentOptions.classList.remove('visible');
+                currentCard.classList.remove('expanded');
+            }
+            
+            // Toggle current card
+            if (optionsDiv.classList.contains('visible')) {
+                optionsDiv.classList.remove('visible');
+                traitCard.classList.remove('expanded');
+                currentlyExpanded = null;
+            } else {
+                optionsDiv.classList.add('visible');
+                traitCard.classList.add('expanded');
+                currentlyExpanded = traitName;
+            }
         }
         
         // Search functionality
@@ -214,8 +341,28 @@
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
+                    // Close expanded options if hiding card
+                    const optionsDiv = card.querySelector('.plot-options');
+                    if (optionsDiv && optionsDiv.classList.contains('visible')) {
+                        optionsDiv.classList.remove('visible');
+                        card.classList.remove('expanded');
+                        currentlyExpanded = null;
+                    }
                 }
             });
+        });
+        
+        // Close options when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.trait-card')) {
+                if (currentlyExpanded) {
+                    const currentOptions = document.getElementById(`options-${currentlyExpanded}`);
+                    const currentCard = currentOptions.closest('.trait-card');
+                    currentOptions.classList.remove('visible');
+                    currentCard.classList.remove('expanded');
+                    currentlyExpanded = null;
+                }
+            }
         });
     </script>
 </body>
