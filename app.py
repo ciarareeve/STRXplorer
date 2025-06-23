@@ -48,5 +48,16 @@ print(f"DEBUG: manhattan_data.db exists: {os.path.exists('data/manhattan_data.db
 
 if __name__ == '__main__':
     import os
-    port = int(os.environ.get('PORT', 5000))
+    
+    # Let Render set the port, with fallback to 10000 for Render, 5000 for local
+    if 'RENDER' in os.environ:
+        # Running on Render - use their preferred port
+        port = int(os.environ.get('PORT', 10000))
+    else:
+        # Running locally - use 5000
+        port = int(os.environ.get('PORT', 5000))
+    
+    print(f"Starting STRXplorer on port {port}")
+    print(f"Environment: {'Render' if 'RENDER' in os.environ else 'Local'}")
+    
     app.run(host='0.0.0.0', port=port, debug=False)
