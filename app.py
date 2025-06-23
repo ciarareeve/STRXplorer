@@ -35,6 +35,14 @@ def create_app(config_name="default"):
 # Create the app instance
 app = create_app()
 
+# Add this right after creating the app
+import os
+print(f"DEBUG: Current working directory: {os.getcwd()}")
+print(f"DEBUG: Files in current directory: {os.listdir('.')}")
+print(f"DEBUG: Files in data directory: {os.listdir('data') if os.path.exists('data') else 'data directory not found'}")
+print(f"DEBUG: locus_data.db exists: {os.path.exists('data/locus_data.db')}")
+print(f"DEBUG: manhattan_data.db exists: {os.path.exists('data/manhattan_data.db')}")
+
 # if __name__ == "__main__":
 #     app.run(debug=True)
 
